@@ -21,7 +21,7 @@ jobs:
           pip install openai requests python-dotenv
 
       - name: Run complaint analyzer
-        run: python complaint-analyzer/slack_handler.py
+        run: run: python slack_handler.py
 
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
