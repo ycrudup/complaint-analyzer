@@ -32,13 +32,14 @@ def get_complaint_tier(text):
 
 def gpt_analysis(text):
     try:
-        response = openai.ChatCompletion.create(
-            model="gpt-4",
-            messages=[
-                {"role": "system", "content": "You are a complaint triage assistant. Based on the user's input, determine if it belongs to Tier 1, Tier 2, or Tier 3 and explain why."},
-                {"role": "user", "content": text}
-            ]
-        )
+        response = openai.chat.completions.create(
+    model="gpt-4",
+    messages=[
+        {"role": "system", "content": "You are a complaint tier classifier. Return complaint tier and explanation."},
+        {"role": "user", "content": complaint}
+    ],
+    temperature=0.2
+)
         return response['choices'][0]['message']['content']
     except Exception as e:
         return f"Error with GPT: {e}"
