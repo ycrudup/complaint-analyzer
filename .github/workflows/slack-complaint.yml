@@ -1,4 +1,5 @@
-name: Handle Slack Complaint
+name: Handle Slack Complaint 🚀
+
 
 on:
   workflow_dispatch:
@@ -20,8 +21,8 @@ jobs:
           pip install openai requests python-dotenv
 
       - name: Run complaint analyzer
-        run: run: python complaint-analyzer/slack_handler.py
-        
+        run: python complaint-analyzer/slack_handler.py
+
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           SLACK_RESPONSE_URL: ${{ secrets.SLACK_RESPONSE_URL }}
