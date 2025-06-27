@@ -30,6 +30,9 @@ payload = {
 }
 
 res = requests.post(slack_response_url, json=payload)
+print(f"Sent to Slack/Webhook: {payload}")
+print(f"Status code: {res.status_code}")
+print(f"Response text: {res.text}")
 
 if res.status_code == 200:
     print("✅ Posted to Slack successfully.")
