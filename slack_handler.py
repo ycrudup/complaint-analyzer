@@ -1,19 +1,27 @@
 import os
 import openai
 import requests
+import urllib.parse
 
-print("🔧 Starting slack_handler.py")
-
+# 🔐 Load OpenAI key
 openai.api_key = os.getenv("OPENAI_API_KEY")
-slack_response_url = os.getenv("SLACK_RESPONSE_URL")
 
-print(f"🔑 OpenAI key loaded: {'Yes' if openai.api_key else 'No'}")
-print(f"🌐 Slack URL: {slack_response_url}")
+# 🔍 Load Slack payload from test string (replace this with actual GitHub Actions input handling later)
+payload_raw = """token=tdVJO0C6NzAzaoOB3z1ly0tW&team_id=T05HJ0CKWG5&team_domain=sq-block&channel_id=D088BM5QL5Q&channel_name=directmessage&user_id=U0888S0R9SR&user_name=066953&command=%2Fcomplaint&text=This+is+a+test+complaint&api_app_id=A093B23SNS0&is_enterprise_install=false&enterprise_id=E01BAFDEXUP&enterprise_name=Block%2C+Inc.&response_url=https%3A%2F%2Fhooks.slack.com%2Fcommands%2FT05HJ0CKWG5%2F9098225233767%2FF2Hf86PxdUWNcAL4QXibMLae&trigger_id=9098225241191.5596012676549.5e2ba9bc1598fb5738f5d4f2c91368cd"""
 
-complaint_text = "This is a test complaint. I am not happy and want a manager."
+# Parse Slack's x-www-form-urlencoded body
+payload = urllib.parse.parse_qs(payload_raw)
 
+# 🔍 Extract complaint and response URL
+complaint_text = payload['text'][0]
+slack_response_url = payload['response_url'][0]
+
+print(f"📨 Complaint: {complaint_text}")
+print(f"🌐 Slack response URL: {slack_response_url}")
+
+# 🔁 GPT Analysis
 def gpt_analyze(complaint):
-    print("📡 Sending complaint to OpenAI...")
+    print("📡 Sending to OpenAI...")
     response = openai.chat.completions.create(
         model="gpt-4",
         messages=[
@@ -22,7 +30,6 @@ def gpt_analyze(complaint):
         ],
         temperature=0.2
     )
-    print("✅ OpenAI responded!")
     return response.choices[0].message.content
 
 try:
@@ -32,10 +39,10 @@ try:
         "text": f"🧠 GPT Complaint Analysis:\n{result}"
     }
 
-    print(f"📤 Sending payload to Slack/Webhook:\n{payload}")
     res = requests.post(slack_response_url, json=payload)
 
-    print(f"✅ Sent to Slack: status={res.status_code}, response={res.text}")
+    print(f"✅ Posted to Slack: {res.status_code} | {res.text}")
 
 except Exception as e:
     print(f"❌ Error: {e}")
+
